@@ -33,13 +33,13 @@ Commands:
   equal <A> <B>
     Compare two versions. Exit 0 if they are equal, 1 if not.
 
-  inc <COMPONENT> <VERSION>
+  inc <COMPONENT> [VERSION]
     Increment major, minor, or patch component.
 
-  get <COMPONENT> <VERSION>
+  get <COMPONENT> [VERSION]
     Get major, minor, patch, prerelease or metadata component.
 
-  set <COMPONENT> <VERSION> <VALUE>
+  set <COMPONENT> <VALUE> [VERSION]
     Set prerelease or metadata component.
 ```
 

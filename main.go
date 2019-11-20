@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/Masterminds/semver"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -33,16 +35,16 @@ var (
 
 	inc          = app.Command("inc", "Increment major, minor, or patch component.")
 	incComponent = inc.Arg("COMPONENT", "The component to increment. Possible values: [major, minor, patch]").Required().String()
-	incVersion   = inc.Arg("VERSION", "The version to increment.").Required().String()
+	incVersion   = inc.Arg("VERSION", "The version to increment.").String()
 
 	get          = app.Command("get", "Get major, minor, patch, prerelease or metadata component.")
 	getComponent = get.Arg("COMPONENT", "The component to increment. Possible values: [major, minor, patch, prerelease, metadata]").Required().String()
-	getVersion   = get.Arg("VERSION", "The version to retreive component from.").Required().String()
+	getVersion   = get.Arg("VERSION", "The version to retreive component from.").String()
 
 	set          = app.Command("set", "Set prerelease or metadata component.")
 	setComponent = set.Arg("COMPONENT", "The component to increment. Possible values: [prerelease, metadata]").Required().String()
-	setVersion   = set.Arg("VERSION", "The version of which to set a component.").Required().String()
 	setValue     = set.Arg("VALUE", "The value to set.").Required().String()
+	setVersion   = set.Arg("VERSION", "The version of which to set a component.").String()
 )
 
 func main() {
@@ -167,6 +169,18 @@ func main() {
 }
 
 func mustParseVersion(s, ctx string) *semver.Version {
+	if s == "" || s == "-" {
+		b, err := ioutil.ReadAll(os.Stdin)
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "could not read version from stdin\n")
+			os.Exit(-1)
+		}
+
+		s = strings.TrimSpace(string(b))
+
+	}
+
 	v, err := semver.NewVersion(s)
 
 	if err != nil {
